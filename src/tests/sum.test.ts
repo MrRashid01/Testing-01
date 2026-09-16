@@ -55,9 +55,10 @@ describe("POST /sum", () => {
       });
 
     expect(res.statusCode).toBe(411);
-
+  
     // Prisma should NOT be called
     expect(prismaClient.sum.create).not.toHaveBeenCalled();
+
   });
 
   it("should return 500 if Prisma fails", async () => {
@@ -74,5 +75,34 @@ describe("POST /sum", () => {
 
     expect(res.statusCode).toBe(500);
     expect(res.body.message).toBe("Something went wrong");
+  });
+  it("should return the sum of two numbers", async () => {
+    prismaClient.sum.create.mockResolvedValue({
+      id: 1,
+      a: 1,
+      b: 2,
+      result: 3,
+    });
+
+    const res = await request(app)
+      .post("/sum")
+      .send({
+        a: 1,
+        b: 2,
+      });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.answer).toBe(3);
+    expect(res.body.id).toBe(1);
+
+    expect(prismaClient.sum.create).toHaveBeenCalledTimes(1);
+
+    expect(prismaClient.sum.create).toHaveBeenCalledWith({
+      data: {
+        a: 1,
+        b: 2,
+        result: 3,
+      },
+    });
   });
 });
