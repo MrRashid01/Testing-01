@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Sum {
+  id     Int @id @default(autoincrement())
+  a      Int
+  b      Int
+  result Int
+}
